@@ -1,22 +1,34 @@
-import { Octokit } from '@octokit/rest';
-
 const OWNER = process.env.GITHUB_REPO_OWNER;
 const REPO = process.env.GITHUB_REPO_NAME;
 const BRANCH = 'data';
 const FILE_PATH = 'data.json';
 const TOKEN = process.env.GITHUB_TOKEN;
 
-const octokit = new Octokit({ auth: TOKEN });
+const API_BASE = 'https://api.github.com';
+
+async function ghFetch(path, options = {}) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    const err = new Error(`GitHub API ${res.status}: ${text}`);
+    err.status = res.status;
+    throw err;
+  }
+  return res.json();
+}
 
 async function getData() {
   try {
-    const { data } = await octokit.repos.getContent({
-      owner: OWNER,
-      repo: REPO,
-      path: FILE_PATH,
-      ref: BRANCH,
-    });
-    const content = Buffer.from(data.content, 'base64').toString('utf-8');
+    const file = await ghFetch(`/repos/${OWNER}/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`);
+    const content = Buffer.from(file.content, 'base64').toString('utf-8');
     return JSON.parse(content);
   } catch (err) {
     if (err.status === 404) {
@@ -29,27 +41,22 @@ async function getData() {
 async function saveData(data) {
   let sha;
   try {
-    const { data: existing } = await octokit.repos.getContent({
-      owner: OWNER,
-      repo: REPO,
-      path: FILE_PATH,
-      ref: BRANCH,
-    });
-    sha = existing.sha;
+    const file = await ghFetch(`/repos/${OWNER}/${REPO}/contents/${FILE_PATH}?ref=${BRANCH}`);
+    sha = file.sha;
   } catch (err) {
     if (err.status !== 404) throw err;
   }
 
   const content = Buffer.from(JSON.stringify(data, null, 2)).toString('base64');
 
-  await octokit.repos.createOrUpdateFileContents({
-    owner: OWNER,
-    repo: REPO,
-    path: FILE_PATH,
-    message: 'Update voting data',
-    content,
-    sha,
-    branch: BRANCH,
+  await ghFetch(`/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message: 'Update voting data',
+      content,
+      sha,
+      branch: BRANCH,
+    }),
   });
 }
 
