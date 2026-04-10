@@ -1,0 +1,79 @@
+{
+  "/Users/jiajia/claudecode/ai-practice-voting/serverless.yml": {
+    "versionFramework": "4.33.3",
+    "servicePath": "/Users/jiajia/claudecode/ai-practice-voting/serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "ai-practice-voting",
+      "provider": {
+        "name": "tencent",
+        "runtime": "Nodejs18.15",
+        "region": "ap-guangzhou",
+        "credentials": "<REDACTED>"
+      },
+      "functions": {
+        "app": {
+          "handler": "server/tencent.mainHandler",
+          "memorySize": 128,
+          "timeout": 10,
+          "src": "./",
+          "events": [
+            {
+              "apigw": {
+                "parameters": {
+                  "protocols": [
+                    "http",
+                    "https"
+                  ],
+                  "serviceName": "ai-practice-voting-api",
+                  "environment": "release",
+                  "endpoints": [
+                    {
+                      "path": "/",
+                      "method": "ANY"
+                    },
+                    {
+                      "path": "/api/data",
+                      "method": "ANY"
+                    },
+                    {
+                      "path": "/assets/*",
+                      "method": "GET"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "package": {
+        "patterns": [
+          "!node_modules/.cache/**",
+          "!*.log",
+          "!dist-ssr/**"
+        ]
+      }
+    },
+    "provider": {
+      "name": "tencent",
+      "runtime": "Nodejs18.15",
+      "region": "ap-guangzhou",
+      "credentials": "<REDACTED>"
+    },
+    "error": {
+      "message": "You must sign in or use a license key with Serverless Framework V.4 and later versions. Please use \"serverless login\".",
+      "stack": "Error: You must sign in or use a license key with Serverless Framework V.4 and later versions. Please use \"serverless login\".\n    at Authentication.getAuthenticatedData (file:///Users/jiajia/.serverless/releases/4.33.3/package/dist/sf-core.js:889:11573)\n    at async Authentication.authenticate (file:///Users/jiajia/.serverless/releases/4.33.3/package/dist/sf-core.js:892:4133)\n    at async _CoreRunner.authenticate (file:///Users/jiajia/.serverless/releases/4.33.3/package/dist/sf-core.js:900:2837)\n    at async _CoreRunner.run (file:///Users/jiajia/.serverless/releases/4.33.3/package/dist/sf-core.js:1451:16159)\n    at async route (file:///Users/jiajia/.serverless/releases/4.33.3/package/dist/sf-core.js:2515:2848)\n    at async Object.run (file:///Users/jiajia/.serverless/releases/4.33.3/package/dist/sf-core.js:2516:3886)\n    at async run2 (file:///Users/jiajia/.serverless/releases/4.33.3/package/dist/sf-core.js:2516:5040)"
+    },
+    "serviceRawFile": "service: ai-practice-voting\n\nprovider:\n  name: tencent\n  runtime: Nodejs18.15\n  region: ap-guangzhou\n  credentials: ~/.tencent_cloud_credentials/tencent_cloud_credentials\n\nfunctions:\n  app:\n    handler: server/tencent.mainHandler\n    memorySize: 128\n    timeout: 10\n    src: ./\n    events:\n      - apigw:\n          parameters:\n            protocols:\n              - http\n              - https\n            serviceName: ai-practice-voting-api\n            environment: release\n            endpoints:\n              - path: /\n                method: ANY\n              - path: /api/data\n                method: ANY\n              - path: /assets/*\n                method: GET\n\npackage:\n  patterns:\n    - '!node_modules/.cache/**'\n    - '!*.log'\n    - '!dist-ssr/**'\n",
+    "command": [
+      "login"
+    ],
+    "options": {},
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}

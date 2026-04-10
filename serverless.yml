@@ -1,0 +1,35 @@
+service: ai-practice-voting
+
+provider:
+  name: tencent
+  runtime: Nodejs18.15
+  region: ap-guangzhou
+  credentials: ~/.tencent_cloud_credentials/tencent_cloud_credentials
+
+functions:
+  app:
+    handler: server/tencent.mainHandler
+    memorySize: 128
+    timeout: 10
+    src: ./
+    events:
+      - apigw:
+          parameters:
+            protocols:
+              - http
+              - https
+            serviceName: ai-practice-voting-api
+            environment: release
+            endpoints:
+              - path: /
+                method: ANY
+              - path: /api/data
+                method: ANY
+              - path: /assets/*
+                method: GET
+
+package:
+  patterns:
+    - '!node_modules/.cache/**'
+    - '!*.log'
+    - '!dist-ssr/**'

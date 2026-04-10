@@ -10,9 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@koa/cors": "^5.0.0",
+    "@koa/router": "^15.4.0",
     "@supabase/supabase-js": "^2.101.1",
+    "koa": "^3.2.0",
+    "koa-bodyparser": "^4.4.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "serverless-http": "^4.0.0",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
